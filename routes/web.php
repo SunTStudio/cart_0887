@@ -21,15 +21,8 @@ Route::get('/produk', [Produk::class, 'index']);
 Route::get('/produk/form', [Produk::class, 'create']);
 Route::get('/produk/form/{id}', [Produk::class, 'edit']);
 Route::get('/keranjang', [Keranjang::class, 'index']);
-<<<<<<< HEAD
-Route::get('/checkout', function () {
-    return 'Dalam tahap pengembangan';
-   });;
-   
-=======
 
 Route::get('/checkout', [Transaksi::class, 'checkout']);
 Route::post('/checkout', [Transaksi::class, 'store']);
 
 Route::get('/transaksi', [Transaksi::class, 'index']);
->>>>>>> ace4a4f9df4066a9b9149f35518121ebbf3e109c

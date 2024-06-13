@@ -34,14 +34,18 @@ class Transaksi extends Controller
         ->selectRaw('sum(produk.harga * keranjang.jumlah_beli) as total')
         ->first();
 
+        $kecamatan = explode('||', $request->get('kecamatan'));
+        $provinsi = explode('||', $request->get('provinsi'));
+        $kota = explode('||', $request->get('kota'));
+
         $trans = new TransaksiModel([
             'tgl_transaksi' => date("Y-m-d H:i:s"),
             'total_bayar' => $data->total,
             'nama' => $request->get('nama'),
             'alamat_jalan' => $request->get('alamat_jalan'),
-            'kecamatan' => $request->get('kecamatan'),
-            'kota' => $request->get('kota'),
-            'provinsi' => $request->get('provinsi'),
+            'kecamatan' => $kecamatan[1],
+            'kota' => $kota[1],
+            'provinsi' => $provinsi[1],
             'id_user' => 1
         ]);
 
@@ -96,6 +100,37 @@ class Transaksi extends Controller
         $search = $request->query('search');
         $order = $request->query('order');
         // $search_stok = $request->query('stok');
+
+        $tgl_awal = $request->query('tgl_awal');
+        $tgl_akhir = $request->query('tgl_akhir');
+        $prov = $request->query('prov');
+        $min_total = $request->query('min_total');
+
+        if ($tgl_awal != '' && $tgl_awal != null) {
+            $data_db_filtered = $data_db_filtered->whereRaw('DATE(tgl_transaksi) >= "'. $tgl_awal.'"');
+           }
+           if ($tgl_akhir != '' && $tgl_akhir != null) {
+            $data_db_filtered = $data_db_filtered->whereRaw('DATE(tgl_transaksi) <= "'. $tgl_akhir.'"');
+           }
+           if ($prov != '' && $prov != null) {
+            $data_db_filtered = $data_db_filtered->where('provinsi', 'like', '%'.$prov.'%');
+           }
+           if ($min_total != '' && $min_total != null) {
+            $data_db_filtered = $data_db_filtered->where('total_bayar', '>=', $min_total);
+           }
+        
+           if ($tgl_awal != '' && $tgl_awal != null) {
+            $data_db = $data_db->whereRaw('DATE(tgl_transaksi) >= "'. $tgl_awal.'"');
+           }
+           if ($tgl_akhir != '' && $tgl_akhir != null) {
+            $data_db = $data_db->whereRaw('DATE(tgl_transaksi) <= "'. $tgl_akhir.'"');
+           }
+           if ($prov != '' && $prov != null) {
+            $data_db = $data_db->where('provinsi', 'like', '%'.$prov.'%');
+           }
+           if ($min_total != '' && $min_total != null) {
+            $data_db = $data_db->where('total_bayar', '>=', $min_total);
+           }
 
         switch ($order[0]['column']) {
             case '0':
